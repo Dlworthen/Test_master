@@ -285,7 +285,9 @@
 
          do j = jlo, jhi
          do i = ilo, ihi
+#ifndef CICE_TLATLON
             tarea(i,j,iblk) = dxt(i,j,iblk)*dyt(i,j,iblk)
+#endif
             uarea(i,j,iblk) = dxu(i,j,iblk)*dyu(i,j,iblk)
             if (tarea(i,j,iblk) > c0) then
                tarear(i,j,iblk) = c1/tarea(i,j,iblk)
@@ -637,6 +639,33 @@
          enddo
       enddo
       !$OMP END PARALLEL DO
+#ifdef CICE_TLATLON
+      !-----------------------------------------------------------------
+      ! tarea
+      !-----------------------------------------------------------------
+
+      fieldname='tarea'
+      call ice_read_nc(fid_kmt,2,fieldname,work1,diag, &
+                       field_loc=field_loc_center, & 
+                       field_type=field_type_scalar)
+
+      tarea(:,:,:) = c0
+      !$OMP PARALLEL DO PRIVATE(iblk,i,j,ilo,ihi,jlo,jhi,this_block)
+      do iblk = 1, nblocks
+         this_block = get_block(blocks_ice(iblk),iblk)         
+         ilo = this_block%ilo
+         ihi = this_block%ihi
+         jlo = this_block%jlo
+         jhi = this_block%jhi
+
+         do j = jlo, jhi
+         do i = ilo, ihi
+            tarea(i,j,iblk) = work1(i,j,iblk)
+         enddo
+         enddo
+      enddo
+      !$OMP END PARALLEL DO
+#endif
 
       !-----------------------------------------------------------------
       ! lat, lon, angle
