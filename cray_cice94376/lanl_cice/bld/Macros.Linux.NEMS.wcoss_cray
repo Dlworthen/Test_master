@@ -12,6 +12,9 @@ CPPFLAGS   := -P
 CPPDEFS    := -DFORTRANUNDERSCORE -DNO_R16 -DHAVE_F2008_CONTIGUOUS -DLINUX -DCPRINTEL -DCICE_NEMS
 CFLAGS     := -c -O2 -fp-model precise -xCORE-AVX2 -g -traceback
 
+# WCOSS CPPDEFS    := -DFORTRANUNDERSCORE -DNO_R16 -DHAVE_F2008_CONTIGUOUS -DLINUX -DCPRINTEL -DCICE_NEMS
+# WCOSS CFLAGS     := -c -O2 -fp-model precise -xHost
+
 ifeq ($(COMMDIR), mpi)
    FC         :=  ftn 
 else
@@ -25,7 +28,13 @@ LD:= $(MPIFC)
 
 FIXEDFLAGS   := -132
 FREEFLAGS    := -free
-FFLAGS       := -O2 -fp-model precise -convert big_endian -assume byterecl -ftz -g -traceback -xCORE-AVX2
+# WORKS past 1050 FFLAGS       := -O2 -fp-model precise -convert big_endian -assume byterecl -ftz -g -traceback -xCORE-AVX2 
+# WORKS past 1050 
+FFLAGS       := -O2 -fp-model precise -convert big_endian -assume byterecl -ftz -g -traceback -xCORE-AVX2 
+# CRASHED at 828 maybe MOM5 setting though -  FFLAGS       := -O2 -fp-model precise -convert big_endian -assume byterecl -ftz -g -traceback -xCORE-AVX2 -align array32byte
+
+# WCOSS FFLAGS     := -O2 -fp-model precise -convert big_endian -assume byterecl -ftz -traceback -xHost
+
 
 FFLAGS_NOOPT := -O0
 
